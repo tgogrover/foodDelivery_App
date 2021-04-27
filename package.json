@@ -1,0 +1,25 @@
+{
+  "name": "fooddelivery_app",
+  "version": "1.0.0",
+  "description": "food delivery with live tracking and real-time features ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "let's",
+    "do",
+    "it!!"
+  ],
+  "author": "T.G.O. grover",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.5",
+    "path": "^0.12.7"
+  }
+}
