@@ -19,7 +19,12 @@
     "dotenv": "^8.2.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "express-ejs-layouts": "^2.5.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.5",
+    "mongoose-type-email": "^1.1.2",
+    "node-localStorage": "0.0.1",
+    "node-sass": "^5.0.0",
     "path": "^0.12.7"
   }
 }
