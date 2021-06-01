@@ -8,7 +8,7 @@ router.get('/homepage',async(req,res)=>{
   await pizzaFind.exec((err,data)=>{
         if(err) throw err;
         else{
-            res.render('home',{pizzas:data})
+            res.render('home',{title:'FOOD DELIVERY APP'})
 
         }
     })

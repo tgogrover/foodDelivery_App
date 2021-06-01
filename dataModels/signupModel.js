@@ -1,5 +1,5 @@
 const mongoose=require('mongoose');
-require('mongoose-type-email')
+
  const SigninSchema=new mongoose.Schema({
 
     Full_Name:{
@@ -9,16 +9,21 @@ require('mongoose-type-email')
     Mobile_Number:{
         required:true,
         type:Number,
-        unique:true
+        unique:true,
+        maxlength:10,
+        minlength:10
     },
-    Email:{        
-       type: mongoose.SchemaTypes.Email, required: true, unique:true
+
+    Email: {
+        required:true,
+        unique:true,
+        type:String
+    },
        
-    },
     Role:{
         type:String,
         enum:['Users','Admin'],
-        default:'users'
+        default:'Users'
     },
     Password:{
         type:String,

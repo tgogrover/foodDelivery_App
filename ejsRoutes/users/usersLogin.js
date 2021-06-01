@@ -1,6 +1,6 @@
 const express=require('express');
 const router=express.Router();
-const siginModel=require('../dataModels/signupModel');
+const siginModel=require('../../dataModels/signupModel');
 const bcrypt=require('bcrypt');
 const { body, validationResult } = require('express-validator');
 
@@ -9,20 +9,17 @@ const validationMessages=[
     .withMessage('Your Name is required'),
     body('email').isEmail()
     .withMessage('Valid Email is required'),
-    body('password').notEmpty()
-    .withMessage('Password is required')
+    body('mobileNo').notEmpty()
+    .withMessage('mobile no. is required'),
+    body('password')
     .isString()
-    .withMessage('password must be a string')
     .isLength({min:5})
     .withMessage('password must contain atleast contain 5 alphabets'),
-     body('mobileNo').notEmpty()
-    .withMessage('mobile no. is required')
-    .isLength({min:10,max:10})
-    .withMessage('valid mobile number is required')
+
 ];
   
 const adminValidation=(req,res,next)=>{
- //  console.log( req.body.fullName)
+   console.log( req.body.fullName)
    const err= validationResult(req);
    console.log(err)
    if(!err.isEmpty()){
@@ -64,18 +61,29 @@ next()
     })
 }
 
-router.post('/api/admin/siginin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
-    const {fullName,mobileNo,email,password}=req.body;
-   console.log(req.body);
+router.get('/routes/users/login',(req,res)=>{
+    res.locals = {
+        title: 'FOOD DELIVERY APP',
+      };
+    res.render('usersEjs/login')
+
+})
+
+router.post('/routes/users/login',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
+  
+    const {fullName,email,mobileNo,password}=req.body;
+    console.log(req.body);
+    const Work=req.body.email.Work
+
     const Hash_Password=bcrypt.hashSync(password,10);
     const SuccessfullSigin=new siginModel({
         Full_Name:fullName,
         Mobile_Number:mobileNo,
         Password:Hash_Password,
-        Role:"Admin",
-          Email:email
+        Email:{
+            Work:Work
+        },
         
-
     })
 await SuccessfullSigin.save((err,signinData)=>{
     if(err) throw err;

@@ -1,9 +1,11 @@
 const express=require('express');
 const router=express.Router();
-const siginModel=require('../dataModels/signupModel');
+const siginModel=require('../../dataModels/signupModel');
 const bcrypt=require('bcrypt');
 const { body, validationResult } = require('express-validator');
 
+
+//console.log(Error)
 const validationMessages=[
     body('fullName').notEmpty()
     .withMessage('Your Name is required'),
@@ -20,13 +22,14 @@ const validationMessages=[
     .isLength({min:10,max:10})
     .withMessage('valid mobile number is required')
 ];
-  
+
+
 const adminValidation=(req,res,next)=>{
- //  console.log( req.body.fullName)
+  // console.log( req.body.fullName)
    const err= validationResult(req);
    console.log(err)
    if(!err.isEmpty()){
-    return res.status(400).json({ error: err.array()[0].msg })
+    return res.render('usersEjs/signin',{ title:'FOOD DELIVERY APP',Messages:'',Error: err.array()[0].msg })
 }
 next();
 
@@ -38,9 +41,7 @@ const uniqueMail=async(req,res,next)=>{
     await emailFindQuery.exec((err,alreadyEmail)=>{
         if(err) throw err;
         if(alreadyEmail){
-res.status(400).json({
-    Message:'Email already exists.So try another Email please'
-})
+            res.render('usersEjs/signin',{title:'FOOD DELIVERY APP',Messages:'',Error:'This account already registered try another account '})
     }
 else{
 next()
@@ -54,9 +55,9 @@ const uniqueMobileNo=async(req,res,next)=>{
     await emailFindQuery.exec((err,validMobileNo)=>{
         if(err) throw err;
         if(validMobileNo){
-res.status(400).json({
-    Message:'Mobile No. already exists.So try another Mobile No. please'
-})
+            res.render('usersEjs/signin',{title:'FOOD DELIVERY APP',Messages:'',
+            Error:'Try another mobile number,  this mobile number is already in use '})
+
     }
 else{
 next()
@@ -64,35 +65,35 @@ next()
     })
 }
 
-router.post('/api/admin/siginin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
-    const {fullName,mobileNo,email,password}=req.body;
-   console.log(req.body);
+router.get('/routes/users/siginin',(req,res)=>{
+    res.render('usersEjs/signin',{title:'FOOD DELIVERY APP',Messages:'',
+    Error:''})
+
+})
+
+router.post('/routes/users/siginin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
+  
+
+    const {fullName,email,mobileNo,password}=req.body;
+    console.log(req.body);
+
     const Hash_Password=bcrypt.hashSync(password,10);
     const SuccessfullSigin=new siginModel({
         Full_Name:fullName,
         Mobile_Number:mobileNo,
         Password:Hash_Password,
-        Role:"Admin",
-          Email:email
-        
-
+        Email:email     
     })
 await SuccessfullSigin.save((err,signinData)=>{
     if(err) throw err;
     
     if(signinData){
-        const {Full_Name,Email}=signinData
-        res.status(201).json({
-            Name:Full_Name,
-            Email:Email,
-            message:"data saved succesfully"
-
-        })
+       res.render('usersEjs/signin',{title:' FOOD DELIVERY APP',Messages:'Data saved Successfully',Error:''})
+       
     }
     else{
-        res.status(400).json({
-        message:'Something went wrong'
-    })
+        res.render('usersEjs/signin',{title:' FOOD DELIVERY APP',Messages:'',Error:'Something went wrong'})
+       
 }
 
 })
