@@ -34,6 +34,7 @@ next();
 
 const uniqueMail=async(req,res,next)=>{
     const email=req.body.email;
+    console.log(req.body)
     const emailFindQuery=siginModel.findOne({Email:email})
     await emailFindQuery.exec((err,alreadyEmail)=>{
         if(err) throw err;

@@ -5,14 +5,20 @@
   </head>
   <body style="background-image: url('/image/healthyFood.jpg')">
   <div class="container mainDiv alignDiv">
-  <form class="form-horizontal"> 
+  <form class="form-horizontal" action="/routes/users/login" method="POST" role="form"> 
+    <% if(Error !='') {%>
+    <h3 style="color: red;"> <%= Error %></h3> 
+      <% } %>
+        <% if(Messages !='') {%>
+          <h3 style="color: green;"> <%= Messages %></h3> 
+            <% } %>
     <div class="mb-3 active" >
       <label for="exampleFormControlTextarea1" class="form-label">Email :</label>
-      <input type="email" class="form-control" id="exampleFormControlTextarea1" placeholder="Enter Your Email">
+      <input type="email" class="form-control" id="exampleFormControlTextarea1" placeholder="Enter Your Email" name='email'>
     </div>
     <div class="mb-3">
       <label for="exampleFormControlTextarea1" class="form-label">Password :</label>
-      <input type="password" class="form-control" id="exampleFormControlTextarea1" placeholder="Enter Your Password">
+      <input type="password" class="form-control" id="exampleFormControlTextarea1" placeholder="Enter Your Password" name="password">
     </div>
     <div class="form-group">
       <!-- Button -->                                        

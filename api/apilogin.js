@@ -3,6 +3,16 @@ const router=express.Router();
 const signinModel=require('../dataModels/signupModel');
 const bcrypt=require('bcrypt');
 const { body, validationResult } = require('express-validator');
+const jwt=require('jsonwebtoken');
+
+
+
+
+if (typeof localStorage === "undefined" || localStorage === null) {
+    var LocalStorage = require('node-localstorage').LocalStorage;
+    localStorage = new LocalStorage('./scratch');
+  }
+  
 
 const validationMessages=[ 
   body('email')
@@ -34,13 +44,19 @@ router.post('/api/admin/login',validationMessages,loginValidation,async(req,res)
     await loginProcess.exec((err,loginData)=>{
 
         if(err) throw err;
+        console.log(loginData)
         if(loginData){
-            const {Password,Full_Name,Role,Email}=loginData
+            const {Password,Full_Name,Role,Email,_id}=loginData;
+            
             if(bcrypt.compareSync(password,Password)){ 
-            res.status(200).json({
-                Full_Name,
-                Role,
-                Email
+                localStorage.setItem('loginEmail',Email);
+                const token= jwt.sign({Role:Role,_id:_id},process.env.SecretKey)
+                localStorage.setItem('loginToken',token)
+                res.status(200).json({
+                    Full_Name,
+                    Role,
+                    Email,
+                    _id
             })
         }
         else{
@@ -58,6 +74,55 @@ router.post('/api/admin/login',validationMessages,loginValidation,async(req,res)
 
     })
 
+})
+
+
+router.post('/api/users/login',validationMessages,loginValidation,async(req,res)=>{
+    const {email,password}=req.body;
+    const loginProcess=signinModel.findOne({Email:email});
+    await loginProcess.exec((err,loginData)=>{
+
+        if(err) throw err;
+        if(loginData){
+            
+            const {Password,Full_Name,Role,Email,_id}=loginData;
+          
+            if(bcrypt.compareSync(password,Password)){ 
+                localStorage.setItem('loginEmail',Email);
+                const token= jwt.sign({Role:Role,_id:_id},process.env.SecretKey)
+                localStorage.setItem('loginToken',token)
+                res.status(200).json({
+                    Full_Name,
+                    Role,
+                    Email,
+                    _id
+            })
+        }
+        else{
+            res.status(400).json({
+                message:'Invalid Password'
+            })
+        }
+
+        }
+        else{
+            
+            res.status(400).json({
+                message:'Email does not exist '
+
+            })
+        }
+
+    })
+
+})
+
+router.get('/logout',(req,res)=>{
+    localStorage.removeItem('loginEmail')
+    localStorage.removeItem('loginToken')
+    res.status(200).json({
+        Message:'logout successfull'
+    })
 })
 
 

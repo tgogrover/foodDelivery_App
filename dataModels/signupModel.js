@@ -30,6 +30,11 @@ const mongoose=require('mongoose');
         required:true,
         minlength:5
         
+    },
+    
+    date:{
+        type:Date,
+        default:Date
     }
 
  })
