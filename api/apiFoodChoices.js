@@ -3,39 +3,50 @@ const router=express.Router();
 const foodChoicesModel=require('../dataModels/foodChoicesModel');
 const jwt=require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
+const authorisedAdminCheck=require('../middlewares/adminAuthentication')
 
 
 
 
-const authorisedAdminCheck=(req,res,next)=>{
+// const authorisedAdminCheck=(req,res,next)=>{
+   
+//     const loginEmail=localStorage.getItem('loginEmail');
+//     console.log(loginEmail)
+//     if(loginEmail){
+//       //  console.log(req.headers.authorization)
+//         if(req.headers.authorization){
+//         const token=req.headers.authorization.split(' ')[1]
+//             try {
+//                 const user= jwt.verify(token,process.env.SecretKey)
+//                   req.user=user
+//                 if(user.Role=="Admin"){
+//                     next();
+//                 }
+//                 else{
+//                     res.json({
+//                         Message:'User Access Denied, only Admin make food Choices'
+//                     })
+//                 }   
+//             } catch (error) {
+//                 res.status(400).json({
+//                 Error:  error.message
+//                 })
+//             }
+//         }
+//         else{
+//             res.status(400).json({
+//                 Error:  'Authorization required'
+//                 })
+
+//         }
+//     }
+//         else{
+//             res.status(400).json({
+//                 Error:'You have to login First'
+//             })
+//         }
     
-    const loginEmail=localStorage.getItem('loginEmail');
-    if(loginEmail){
-        const token=req.headers.authorization.split(' ')[1]
-            try {
-                const user= jwt.verify(token,process.env.SecretKey)
-                  req.user=user
-                if(user.Role=="Admin"){
-                    next();
-                }
-                else{
-                    res.json({
-                        Message:'User Access Denied, only Admin make food Choices'
-                    })
-                }   
-            } catch (error) {
-                res.status(400).json({
-                Error:  error.message
-                })
-            }
-        }
-        else{
-            res.status(400).json({
-                Error:'You have to login First'
-            })
-        }
-    
-}
+// };
 
 
 

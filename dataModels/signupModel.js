@@ -22,7 +22,7 @@ const mongoose=require('mongoose');
        
     Role:{
         type:String,
-        enum:['Users','Admin'],
+        enum:['Users','Admin','Delivery Person'],
         default:'Users'
     },
     Password:{
@@ -30,14 +30,8 @@ const mongoose=require('mongoose');
         required:true,
         minlength:5
         
-    },
-    
-    date:{
-        type:Date,
-        default:Date
-    }
-
- })
+    }  
+ }, { timestamps: true })
 
 
  const siginModel=mongoose.model('User',SigninSchema)

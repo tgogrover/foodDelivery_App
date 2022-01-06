@@ -3,7 +3,17 @@ const router=express.Router();
 const siginModel=require('../../dataModels/signupModel');
 const bcrypt=require('bcrypt');
 const { body, validationResult } = require('express-validator');
+const jwt=require('jsonwebtoken');
 
+
+function checkLoginUser(req,res,next){
+    var loginToken=localStorage.getItem('loginToken');
+   // console.log(loginToken)
+   if(loginToken){
+       res.redirect('/homepage')
+   }
+    next();
+  }
 
 //console.log(Error)
 const validationMessages=[
@@ -65,13 +75,20 @@ next()
     })
 }
 
-router.get('/routes/users/siginin',(req,res)=>{
+router.get('/routes/users/signin',checkLoginUser,(req,res,next)=>{
+    var loginToken=localStorage.getItem('loginToken');
+   // console.log(loginToken)
+   if(loginToken){
+       res.redirect('/homepage')
+   }
+    next();
+  },(req,res)=>{
     res.render('usersEjs/signin',{title:'FOOD DELIVERY APP',Messages:'',
     Error:''})
 
 })
 
-router.post('/routes/users/siginin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
+router.post('/routes/users/signin',checkLoginUser,uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
   
 
     const {fullName,email,mobileNo,password}=req.body;

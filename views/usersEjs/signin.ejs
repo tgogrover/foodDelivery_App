@@ -5,7 +5,7 @@
 </head>
 <body style="background-image: url('/image/healthyFood.jpg');">
 <div class="container mainDiv alignDiv">
-<form class="form-horizontal" action="/routes/users/siginin" method="POST" role="form"> 
+<form class="form-horizontal" action="/routes/users/signin" method="POST" role="form"> 
 <% if(Error !='') {%>
   <h3 style="color: red"><b><%= Error %></b></h3>
 <% } %>
@@ -34,7 +34,7 @@
     <input type="submit" name="submit" value="SignUp" class="btn btn-primary">   
     </div>
 </div>
-<p>Already have a Registered Account? <a href="/login">Login Here</a></p>
+<p>Already have a Registered Account? <a href="/routes/users/login">Login Here</a></p>
 </form>
 </div>
 </body>

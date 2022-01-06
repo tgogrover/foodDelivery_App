@@ -1,0 +1,12 @@
+<table>
+    <tr>
+      <th>Order</th>
+      <th>Status</th>
+    </tr>
+    <% pizzas.forEach(function(pizza) { %>
+    <tr>
+      <td><%= pizza.type %></td>
+      <td><%= pizza.isCompleted %></td>
+      <% }) %>
+    </tr>
+</table>

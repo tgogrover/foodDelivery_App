@@ -4,7 +4,7 @@ const signinModel=require('../dataModels/signupModel');
 const bcrypt=require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const jwt=require('jsonwebtoken');
-
+require('dotenv').config()
 
 
 
@@ -52,6 +52,7 @@ router.post('/api/admin/login',validationMessages,loginValidation,async(req,res)
                 localStorage.setItem('loginEmail',Email);
                 const token= jwt.sign({Role:Role,_id:_id},process.env.SecretKey)
                 localStorage.setItem('loginToken',token)
+                localStorage.setItem('loginID',_id)
                 res.status(200).json({
                     Full_Name,
                     Role,
@@ -91,6 +92,7 @@ router.post('/api/users/login',validationMessages,loginValidation,async(req,res)
                 localStorage.setItem('loginEmail',Email);
                 const token= jwt.sign({Role:Role,_id:_id},process.env.SecretKey)
                 localStorage.setItem('loginToken',token)
+                localStorage.setItem('loginID',_id)
                 res.status(200).json({
                     Full_Name,
                     Role,
@@ -120,6 +122,7 @@ router.post('/api/users/login',validationMessages,loginValidation,async(req,res)
 router.get('/logout',(req,res)=>{
     localStorage.removeItem('loginEmail')
     localStorage.removeItem('loginToken')
+    localStorage.removeItem('loginID')
     res.status(200).json({
         Message:'logout successfull'
     })

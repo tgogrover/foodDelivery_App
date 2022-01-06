@@ -3,11 +3,13 @@ const router=express.Router();
 const slugify=require('slugify')
 const multer=require('multer');
 const jwt=require('jsonwebtoken');
-const shortID=require('shortid');
+//const shortID=require('shortid');
 const { body, validationResult } = require('express-validator');
 const restaurantModel = require('../dataModels/restaurantModel');
 const foodChoices=require('../dataModels/foodChoicesModel');
 const foodChoicesModel = require('../dataModels/foodChoicesModel');
+const dishModel = require('../dataModels/dishModel');
+const authorisedAdminCheck=require('../middlewares/adminAuthentication')
 // var timeout = require('connect-timeout')
 // router.use(timeout)
 
@@ -15,7 +17,7 @@ const foodChoicesModel = require('../dataModels/foodChoicesModel');
 
 const storage=multer.diskStorage({
     destination:(req,file,cb)=>{
-        cb(null, 'uploads/restaurantUploads')
+        cb(null, 'public/uploads/restaurantUploads')
 
     },
     //naming file name in uploads directory with file's original name and extension
@@ -24,7 +26,7 @@ const storage=multer.diskStorage({
     //originalname=file's originalname
     //filename=file name stored in uploads directory(destination)
     filename:(req,file,cb)=>{
-        cb(null,shortID.generate()+'-'+ file.originalname )
+        cb(null,file.originalname )
 
     }
 });
@@ -32,37 +34,6 @@ const imageUpload=multer({storage});
 
 
 
-
-const authorisedAdminCheck=(req,res,next)=>{
-   
-    const loginEmail=localStorage.getItem('loginEmail');
-    console.log(loginEmail)
-    if(loginEmail){
-        const token=req.headers.authorization.split(' ')[1]
-            try {
-                const user= jwt.verify(token,process.env.SecretKey)
-                  req.user=user
-                if(user.Role=="Admin"){
-                    next();
-                }
-                else{
-                    res.json({
-                        Message:'User Access Denied, only Admin make food Choices'
-                    })
-                }   
-            } catch (error) {
-                res.status(400).json({
-                Error:  error.message
-                })
-            }
-        }
-        else{
-            res.status(400).json({
-                Error:'You have to login First'
-            })
-        }
-    
-};
 
 
 
@@ -84,6 +55,49 @@ router.get('/api/admin/restaurant',authorisedAdminCheck,async(req,res)=>{
    })
 
 })
+
+router.get('/api/admin/restaurant/:id',authorisedAdminCheck,async(req,res)=>{
+    var id=req.params.id
+    await restaurantModel.findById({_id:id}).exec((err,restaurantData)=>{
+        if(err) throw err;
+       // console.log(dishData)
+        if(restaurantData){
+          const {Description,Food_Choices}=restaurantData;
+          //console.log(CreatedBy)
+          const restaurantName=restaurantData.Name;
+
+
+        //   dishModel.findOne({_id:Dish}).exec((err,Dish)=>{
+        //       if(err) throw err;
+        //       if(Dish){
+        //       const DishName=Dish.Name
+          foodChoicesModel.findOne({_id:Food_Choices}).exec((err,foodChoice)=>{
+              if(err) throw err; 
+             // console.log(foodChoice)
+              if(foodChoice){
+                const {Name}=foodChoice;
+                  res.status(200).json({
+                      Restaurant:restaurantName,
+                   
+                      Specialties:Name,
+                      Description:Description  
+                  })
+        //       }
+        //   })
+        }
+        })
+        }
+        else{
+            res.status(400).json({
+                Error:'No Restaurant Found'
+            })
+        }
+ 
+    })
+});
+
+
+
 router.post('/api/admin/restaurant',authorisedAdminCheck,imageUpload.array('referancePicture'), 
 body('name')
 .notEmpty()
@@ -103,7 +117,7 @@ body('contacts')
 .isLength({min:10,max:10}).withMessage('valid mobile number is required'),async(req,res)=>{
     const {name,foodChoices,description,contacts,address}=req.body;
     const err= validationResult(req);
-    console.log(req.body)
+   // console.log(req.body)
 
     if(!err.isEmpty()){
 //console.log(err.mapped())
@@ -112,22 +126,25 @@ body('contacts')
        return res.status(400).json({ error: err.array()[0].msg })
    }
    else{
-    let Restaurant_Pictures = [];
+    
     if(req.files.length > 0){
         Restaurant_Pictures= req.files.map(file => {
             return { img: file.filename }
         });
-        
-        await  restaurantModel.findOne({ Address:address}).exec((err,restaurant)=>{
+        console.log(req.files[0])
+       
+        await  restaurantModel.findOne({ Address:address,Contacts:contacts},(err,restaurant)=>{
+        // .exec((err,restaurant)=>{
             if(err) throw err;
             if(restaurant){
+                console.log(restaurant)
                 res.status(400).json({
-                    Message:'Try Another Location'
-    
+                    Message:'Try Another Location with different Phone No.'
                 })
             }
             else{
                
+             
         const Restaurant=new restaurantModel({
             Name:name,
             Slug:slugify(name),
@@ -135,7 +152,7 @@ body('contacts')
             Description:description,
             Food_Choices:foodChoices,
             Contacts:contacts,
-            Restaurant_Pictures:Restaurant_Pictures,
+            Restaurant_Pictures:req.files[0].filename,
             Address:address
         })
        Restaurant.save((err,restaurant)=>{
@@ -147,7 +164,8 @@ body('contacts')
           }
         })
     }
-    })
+})
+    // })
     }
     else{
         res.status(400).json({

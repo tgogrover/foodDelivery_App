@@ -25,7 +25,8 @@ const RestaurantSchema= new mongoose.Schema({
         required:true,
         minlength:10,
         maxlength:10,
-        trim:true
+        trim:true,
+        unique:true
     },
     Review:[
         {
@@ -37,11 +38,11 @@ const RestaurantSchema= new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,ref:'User',
         required:true
     },
-    Restaurant_Pictures:[
-        { img: { type: String ,required:true} }
+    Restaurant_Pictures:
+         { type: String ,required:true} 
        
 
-    ],
+    ,
     Food_Choices:{
         type:mongoose.Schema.Types.ObjectId,ref:'food',required:true
     }, Updated_At:Date

@@ -65,7 +65,7 @@ next()
     })
 }
 
-router.post('/api/admin/siginin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
+router.post('/api/admin/signin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
     const {fullName,mobileNo,email,password}=req.body;
    console.log(req.body);
     const Hash_Password=bcrypt.hashSync(password,10);
@@ -99,5 +99,107 @@ await SuccessfullSigin.save((err,signinData)=>{
 })
 })
 
+router.post('/api/deliveryPerson/signin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
+    const {fullName,mobileNo,email,password}=req.body;
+   console.log(req.body);
+    const Hash_Password=bcrypt.hashSync(password,10);
+    const SuccessfullSigin=new siginModel({
+        Full_Name:fullName,
+        Mobile_Number:mobileNo,
+        Password:Hash_Password,
+        Role:"Delivery Person",
+          Email:email
+        
+
+    })
+await SuccessfullSigin.save((err,signinData)=>{
+    if(err) throw err;
+    
+    if(signinData){
+        const {Full_Name,Email}=signinData
+        res.status(201).json({
+            Name:Full_Name,
+            Email:Email,
+            message:"data saved succesfully"
+
+        })
+    }
+    else{
+        res.status(400).json({
+        message:'Something went wrong'
+    })
+}
+
+})
+})
+
+router.post('/api/users/signin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
+    const {fullName,mobileNo,email,password}=req.body;
+   console.log(req.body);
+    const Hash_Password=bcrypt.hashSync(password,10);
+    const SuccessfullSigin=new siginModel({
+        Full_Name:fullName,
+        Mobile_Number:mobileNo,
+        Password:Hash_Password,
+        Role:"Users",
+          Email:email
+        
+
+    })
+await SuccessfullSigin.save((err,signinData)=>{
+    if(err) throw err;
+    
+    if(signinData){
+        const {Full_Name,Email}=signinData
+        res.status(201).json({
+            Name:Full_Name,
+            Email:Email,
+            message:"data saved succesfully"
+
+        })
+    }
+    else{
+        res.status(400).json({
+        message:'Something went wrong'
+    })
+}
+
+})
+})
+
+
+router.post('/api/deliveryPerson/signin',uniqueMail,uniqueMobileNo,validationMessages,adminValidation,async(req,res)=>{
+    const {fullName,mobileNo,email,password}=req.body;
+   console.log(req.body);
+    const Hash_Password=bcrypt.hashSync(password,10);
+    const SuccessfullSigin=new siginModel({
+        Full_Name:fullName,
+        Mobile_Number:mobileNo,
+        Password:Hash_Password,
+        Role:"Delivery Person",
+          Email:email
+        
+
+    })
+await SuccessfullSigin.save((err,signinData)=>{
+    if(err) throw err;
+    
+    if(signinData){
+        const {Full_Name,Email}=signinData
+        res.status(201).json({
+            Name:Full_Name,
+            Email:Email,
+            message:"data saved succesfully"
+
+        })
+    }
+    else{
+        res.status(400).json({
+        message:'Something went wrong'
+    })
+}
+
+})
+})
 
 module.exports=router

@@ -13,11 +13,11 @@ const foodChoicesModel=require('../dataModels/foodChoicesModel')
 
 const storage=multer.diskStorage({
     destination:(req,file,cb)=>{
-        cb(null, 'uploads/dishesUploads')
+        cb(null, 'public/uploads/dishesUploads')
 
     },
     filename:(req,file,cb)=>{
-        cb(null,shortID.generate()+'-'+ file.originalname )
+        cb(null, file.originalname )
     }
 });
 const imageUpload=multer({storage});
@@ -127,10 +127,12 @@ router.post('/api/admin/dishes',authorisedAdminCheck,imageUpload.array('referanc
 body('name')
 .notEmpty()
 .withMessage("dish name is required"),
-body('foodChoices')    
+body('Restaurant')
 .notEmpty()
-.withMessage("Food Choices is required"),async(req,res)=>{
-    const {name,foodChoices}=req.body;
+.withMessage("restaurent name is required"),
+async(req,res)=>{
+    const {name, Restaurant,Price}=req.body;
+    console.log(body)
     const err= validationResult(req);
     console.log(req.body)
 
@@ -142,34 +144,21 @@ body('foodChoices')
    }
    else{
        
-       //console.log(filename)
-      // console.log(req.file)
-    //    console.log(req.files)
-    //    const filename =req.files[0].filename
-    //    console.log(filename)
-
-    let ReferancePicture = [];
-    if(req.files.length > 0){
-        ReferancePicture = req.files.map(file => {
-            return { img: file.filename }
-        });
-        await  dishModel.findOne({Name:name}).exec((err,dish)=>{
-            if(err) throw err;
-            if(dish){
-                res.status(400).json({
-                    Message:'Dish Already Exist'
     
-                })
-            }
-            else{
+    if(req.files.length > 0){
+        
+            
         const Dish=new dishModel({
             Name:name,
             Slug:slugify(name),
             Created_By:req.user._id,
-            Food_Choices:foodChoices,
-            ReferancePicture:ReferancePicture
+            
+            ReferancePicture:req.files[0].filename,
+            Price:Price,
+            Restaurant:Restaurant
+            
         })
-       Dish.save((err,dish)=>{
+     await  Dish.save((err,dish)=>{
           if(err) throw err;
           if(dish){
             res.status(201).json({
@@ -177,8 +166,8 @@ body('foodChoices')
             })
           }
         })
-    }
-    })
+    
+    
     }
     else{
         res.status(400).json({

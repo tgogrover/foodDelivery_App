@@ -37,7 +37,38 @@
     display: table;
   }
   
+.foodChoices{
+  width: 20%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-radius: 25px;
+  
+  
+}
 
+.foodChoices:hover{
+  background: #0b7dda;
+
+}
+ 
+.mexican{
+  width: 25%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-radius: 25px;
+}
   
   /* Create four equal columns that sits next to each other */
   #main {
